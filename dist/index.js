@@ -1,8 +1,10 @@
-"use strict";
 // src/index.ts
-const express = require("express");
-const { connectMongoDb } = require("./connection");
-const userRouter = require("./routes/user");
+// Load env variables once at the top
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import { connectMongoDb } from './connection.js';
+import userRouter from './routes/user.js';
 const app = express();
 const port = process.env.PORT || 3000;
 //Connection

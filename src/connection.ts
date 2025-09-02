@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 
-async function connectMongoDb(url: any) {
+export async function connectMongoDb(url: string) {
    return mongoose.connect(url);
-}
-
-module.exports = {
-    connectMongoDb,
 }
