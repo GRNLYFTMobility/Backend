@@ -1,27 +1,28 @@
-  // src/index.ts
-  // Load env variables once at the top
-  import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
-import { connectMongoDb } from './connection.js';
-import userRouter from './routes/user.js';
+import { connectPostgres, sequelize } from './connection.ts';
+import userRouter from './routes/user.ts'; // no .ts extension
 
-  const app = express();
-  const port = process.env.PORT || 3000;
+const app = express();
+const port = process.env.APP_PORT || 3000; // use a separate port for Express
 
-  //Connection
-  connectMongoDb("mongodb://127.0.0.1:27017/grn-lyft").then(() => 
-    console.log("Mongodb Connected!")
-  );
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-  // Middleware - plugin
-  app.use(express.urlencoded({extended : false}));
-  app.use(express.json());
+async function startServer() {
+  await connectPostgres();
+  await sequelize.sync(); // sync all models
 
-  //Routes
   app.use("/api/users", userRouter);
+  app.use("/uploads", express.static("uploads")); // serve images
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
+}
+
+startServer().catch(err => {
+  console.error("Failed to start server:", err);
+});
